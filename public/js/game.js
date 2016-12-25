@@ -2,6 +2,7 @@ var startGame = function() {
   word = setWord();
   removeInput();
   createInput();
+  livesLeft = 3;
 }
 
 var setWord = function() {
@@ -53,16 +54,25 @@ var createInput = function() {
 var revealLetter = function() {
   var inputBox = document.getElementById("letter-box");
   var letter = inputBox.value;
+  if (letter.length > 1) {
+    alert("Only input a single letter!")
+    return
+  }
   var hiddenWord = document.getElementById("hidden-word");
 
   inputBox.value = null;
-
+  var found = false;
   for(var i = 0; i < word.length; i++) {
     if (word[i] === letter) {
+      found = true;
       var val = hiddenWord.innerHTML;
       var revealedStr = val.substr(0, i) + letter + val.substr(i + 1);
       hiddenWord.innerHTML = revealedStr;
     }
+  }
+
+  if (!found) {
+    loseLife()
   }
 
   checkForWin()
@@ -72,5 +82,21 @@ var checkForWin = function() {
   var hiddenWord = document.getElementById("hidden-word");
   if (hiddenWord.innerHTML === word) {
     setTimeout(function() { alert("You win!") ; window.location.reload()  }, 500);
+  }
+}
+
+var loseLife = function() {
+  var lives = document.getElementById("lives");
+  for(var i = 0 ; i < 6 ; i++) {
+    var node = lives.childNodes[i]
+    if ((i % 2) && (node.style.color != "red") ) {
+      node.style.color = "red";
+      livesLeft--
+      break;
+    }
+  }
+
+  if (livesLeft === 0) {
+    setTimeout(function() { alert("You ran out of lives!!") ; window.location.reload()  }, 500);
   }
 }
